@@ -1,0 +1,5 @@
+# flake configs for wulftp
+
+[flake8]
+exclude = .wolffenv, __pycache__
+max-line-length = 120
