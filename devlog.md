@@ -4,6 +4,9 @@
 * Historically, I default to `asdf`+ `venv` for version management/env isolation
 * pinned PyQt6 version to be <6.6 to avoid future breaks
 
+* I've used this opportunity to try to learn some usees of decorators.
+  * Here I am using it as a safety net, *not* error flow control. 
+  * iiuc this is idiomatic
 
 ### pitfalls
 * clearly, there's potential for really subtle races here. I'll be adding graceful exits as I have time
