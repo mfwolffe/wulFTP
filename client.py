@@ -1,8 +1,8 @@
+
 import paramiko
-import os
-from fakefig import HOST, PORT, UNAME, UPWD, KEYPATH, LANDING
-# TODO @mfwolffe log instead of print calls
-import logging
+from fakefig import HOST, PORT, UNAME, UPWD, KEYPATH  # ,  LANDING
+# import os
+# import logging
 
 # TODO @mfwolffe
 #       - threading for uploads
@@ -19,7 +19,7 @@ class Client:
 
     def connect(self):
         """
-            Using paramiko utils, establish 
+            Using paramiko utils, establish
             an sftp connection
         """
 
@@ -27,7 +27,7 @@ class Client:
             self.client = paramiko.SSHClient()
 
             # TODO @mfwolffe do not automatically add to known hosts file
-            #                man in the middle...                
+            #                man in the middle...
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
             if KEYPATH:
@@ -48,6 +48,11 @@ class Client:
         return False
 
     def disconnect(self):
+        """
+            As it stands, gracefully close sftp
+            session and ssh connection. I think
+            I've got most of the possible races?
+        """
         # DONE @mfwolffe write me lol
         # if not self.connected:
         #     print("No active connection")
@@ -73,6 +78,6 @@ class Client:
                     print("Warning: SSH connection already closed by host")
                 except Exception as e:
                     print(f"Fatal: Unexpected error closing SSH connection: {e}")
-                    
+
         except Exception as e:
-            print(f"Fatal: Unexpected error during disconnect subroutine: {e}")            
+            print(f"Fatal: Unexpected error during disconnect subroutine: {e}")
