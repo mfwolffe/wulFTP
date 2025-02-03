@@ -3,11 +3,11 @@
 import paramiko
 import socket
 
-SEVERETIES = {0: "Fatal", 1: "Error", 2: "Warning", 3: "Internal"}
+SEVERETIES = {0: "Fatal", 1: "Error", 2: "Warning", 3: "Internal", 4: "Info"}
 
 
-def dispatch(level: int, msg: str, err):
-    print(f"[{SEVERETIES[level]}] {msg}: {err}")
+def dispatch(level: int, msg: str, err=None):
+    print(f"[{SEVERETIES[level]}] {msg}: {'' if err is None else err}")
 
 
 def handle_excepts(fn):
