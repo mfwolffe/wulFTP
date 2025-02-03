@@ -3,10 +3,11 @@
 import paramiko
 import socket
 
+SEVERETIES = {0: "Fatal", 1: "Error", 2: "Warning", 3: "Internal"}
+
 
 def dispatch(level: int, msg: str, err):
-    severeties = {0: "Fatal", 1: "Error", 2: "Warning"}
-    print(f"[{severeties[level]}] {msg}: {err}")
+    print(f"[{SEVERETIES[level]}] {msg}: {err}")
 
 
 def handle_excepts(fn):
@@ -24,7 +25,10 @@ def handle_excepts(fn):
         except EOFError as e:
             dispatch(0, "Connection closed unexpectedly", e)
         except FileNotFoundError as e:
-            dispatch(1, "File not found", e)
+            if "upload" in fn.__name__:
+                dispatch(1, "File not found", e)
+            else:
+                dispatch(3, "Configuration/log not found")
         except PermissionError as e:
             dispatch(2, "Permission denied", e)
         except Exception as e:
