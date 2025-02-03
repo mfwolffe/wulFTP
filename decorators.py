@@ -1,7 +1,7 @@
 # decorators for wulFTP routines
 
-import paramiko
-import socket
+# import paramiko
+# import socket
 
 def handle_excepts(fn):
     def wrapper(*args, **kwargs):
@@ -11,4 +11,3 @@ def handle_excepts(fn):
             print(f"Fatal: Unexpected Error: {e}")
         return False
     return wrapper
-    
