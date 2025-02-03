@@ -22,6 +22,7 @@ class Client:
             Using paramiko utils, establish
             an sftp connection
         """
+        # TODO @mfwolffe make grace or some such thing
 
         try:
             self.client = paramiko.SSHClient()
