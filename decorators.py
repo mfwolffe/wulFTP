@@ -26,7 +26,7 @@ def handle_excepts(fn):
             dispatch(0, "Connection closed unexpectedly", e)
         except FileNotFoundError as e:
             if "upload" in fn.__name__:
-                dispatch(1, "File not found", e)
+                dispatch(0, "File not found", e)
             else:
                 dispatch(3, "Configuration/log not found")
         except PermissionError as e:
