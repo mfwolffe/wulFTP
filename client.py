@@ -1,6 +1,6 @@
 
 import paramiko
-from fakefig import HOST, PORT, UNAME, UPWD, KEYPATH  # ,  LANDING
+from fakefig import HOST, PORT, UNAME, UPWD, KEYPATH, LANDING
 from decorators import handle_excepts, dispatch
 # import os
 # import logging
@@ -49,6 +49,31 @@ class Client:
     @handle_excepts
     def upload_thing(self, lPath):
         # TODO @mfwolffe write me lol
+
+        if not self.sftp:
+            dispatch(0, "No active SFTP session. Unable to upload file.")
+            return False
+
+        # extract filename from local path
+        # and construct destination path
+        # NOTE: these are simple string operations and will not
+        # throw for nonexistant file
+        fName       = os.path.basename(lPath)
+        remote_path = os.path.join(LANDING, fName)
+
+         if not os.path.exists(lPath):
+            dispatch(0, "Filepath '{lPath}' not found.")
+            return False
+
+        try:
+            # write uploader
+            pass
+        except PermissionError as e:
+            dispatch(2, "Permission denied")
+            return False
+
+        # default to failure
+        dispatch(2, "Upload of '{fName}' not completed.")
         return False
 
     def disconnect(self):
