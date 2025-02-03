@@ -1,6 +1,7 @@
 
 import paramiko
 from fakefig import HOST, PORT, UNAME, UPWD, KEYPATH  # ,  LANDING
+from decorators import handle_excepts, dispatch
 # import os
 # import logging
 
@@ -17,6 +18,7 @@ class Client:
         self.client     = None
         self.connected  = False
 
+    @handle_excepts
     def connect(self):
         """
             Using paramiko utils, establish
@@ -44,6 +46,7 @@ class Client:
             print(f"ERROR: Failed to connect to {HOST}.\nMESSAGE: {e}")
             return False
 
+    @handle_excepts
     def upload_thing(self, lPath):
         # TODO @mfwolffe write me lol
         return False
@@ -59,26 +62,15 @@ class Client:
         #     print("No active connection")
         #     return
 
-        try:
-            if self.sftp:
-                try:
-                    self.sftp.close()
-                    print("Notice: SFTP session closed.")
-                except paramiko.sftp.SFTPError as e:
-                    print(f"Warning: Failed to close SFTP session: {e}")
-                except Exception as e:
-                    print(f"Fatal: Unexpected error closing SFTP session: {e}")
+        if not self.client:
+            dispatch(4, "No active connection.")
 
-            if self.client:
-                try:
-                    self.client.close()
-                    print("Notice: SSH connection closed.")
-                except paramiko.SSHException as e:
-                    print(f"Warning: Failed to close SSH connection: {e}")
-                except EOFError:
-                    print("Warning: SSH connection already closed by host")
-                except Exception as e:
-                    print(f"Fatal: Unexpected error closing SSH connection: {e}")
+        if self.sftp:
+            self.sftp.close()
+            dispatch(4, "SFTP session closed.")
 
-        except Exception as e:
-            print(f"Fatal: Unexpected error during disconnect subroutine: {e}")
+        if self.client:
+            self.client.close()
+            dispatch(4, "SSH connection closed.")
+
+        dispatch(4, "Connection to host severed cleanly.")
