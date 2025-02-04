@@ -66,10 +66,10 @@ class Client:
         # NOTE: these are simple string operations and will not
         # throw for nonexistant file
         fName       = os.path.basename(lPath)
-        remote_path = os.path.join(LANDING, fName)
+        remote_path = os.path.join(LANDING, fName)  # noqa: F841
 
         if not os.path.exists(lPath):
-            dispatch(0, "Filepath '{lPath}' not found.")
+            dispatch(0, "Filepath '{fname}' not found.")
             return False
 
         try:
