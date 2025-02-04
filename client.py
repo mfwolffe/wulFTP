@@ -1,6 +1,6 @@
 
 import paramiko
-from fakefig import HOST, PORT, UNAME, UPWD, KEYPATH, LANDING
+from fakefig import HOST, PORT, UNAME, UPWD, KEYPATH, LANDING, DFAULTKEY, VALIDKEYS
 from decorators import handle_excepts, dispatch
 import os
 # import logging
@@ -18,10 +18,31 @@ class Client:
         self.client     = None
         self.connected  = False
 
-    def load_key(filepath):
+    def load_key(filepath, key_type=DFAULTKEY, passphrase=None):
+        # TODO @mfwolffe think about the decorator and the current
+        #                current exception handling
         """
             Use paramiko util to load arbitrary type private key
         """
+        if not os.path.exists(filepath):
+            raise ValueError(f"Key file not found: {filepath}")
+
+        if key_type not in VALIDKEYS:
+            raise ValueError("Unsupported key type: {key_type}")
+
+        try:
+            key = VALIDKEYS[key_type].from_private_key_file(filepath, password=passphrase)
+
+            if key_type == "RSA" and key.bits < 2048:
+                raise ValueError("RSA key too weak.")
+
+            return key
+        except paramiko.PasswordRequiredException:
+            raise ValueError(f"The {key_type} key at {filepath} requires passphrase")
+        except paramiko.SSHException as e:
+            raise ValueError(f"Failed to load {key_type} from {filepath}: {e}")
+        except IOError as e:
+            raise ValueError(f"Unable to open file {filepath}: {e}")
 
     @handle_excepts
     def connect(self):
