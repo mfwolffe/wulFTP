@@ -2,7 +2,7 @@
 import paramiko
 from fakefig import HOST, PORT, UNAME, UPWD, KEYPATH, LANDING
 from decorators import handle_excepts, dispatch
-# import os
+import os
 # import logging
 
 # TODO @mfwolffe
@@ -17,6 +17,11 @@ class Client:
         self.sftp       = None
         self.client     = None
         self.connected  = False
+
+    def load_key(filepath):
+        """
+            Use paramiko util to load arbitrary type private key
+        """
 
     @handle_excepts
     def connect(self):
@@ -33,6 +38,8 @@ class Client:
             #                man in the middle...
             self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
+            # TODO @mfwolffe either enforce an algo or allow choice
+            #                between strong types
             if KEYPATH:
                 pkey = paramiko.RSAKey(filename=KEYPATH)
                 self.client.connect(HOST, PORT, UNAME, pkey=pkey)
@@ -48,7 +55,7 @@ class Client:
 
     @handle_excepts
     def upload_thing(self, lPath):
-        # TODO @mfwolffe write me lol
+        # DONE? @mfwolffe write me lol
 
         if not self.sftp:
             dispatch(0, "No active SFTP session. Unable to upload file.")
@@ -61,7 +68,7 @@ class Client:
         fName       = os.path.basename(lPath)
         remote_path = os.path.join(LANDING, fName)
 
-         if not os.path.exists(lPath):
+        if not os.path.exists(lPath):
             dispatch(0, "Filepath '{lPath}' not found.")
             return False
 
@@ -69,18 +76,20 @@ class Client:
             # write uploader
             pass
         except PermissionError as e:
-            dispatch(2, "Permission denied")
+            dispatch(2, "Permission denied", e)
             return False
 
         # default to failure
         dispatch(2, "Upload of '{fName}' not completed.")
         return False
 
+    @handle_excepts
     def disconnect(self):
         """
             As it stands, gracefully close sftp
             session and ssh connection. I think
             I've got most of the possible races?
+            (caught by decorator)
         """
         # DONE @mfwolffe write me lol
         # if not self.connected:
