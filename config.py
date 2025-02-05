@@ -7,8 +7,8 @@ PORT    = "^..."
 UNAME   = "DO YOU HAVE A USER CONFIGURED ON STARCHNET?"
 UPWD    = "^..."
 
-# switch to key based auth eventually
 KEYPATH = ""
+LANDING = f"/home/{UNAME}/bk"
 
-# not sure yet
-REMOTE_LANDING = ""
+DFAULTKEY = "KIKI"
+VALIDKEYS = {0: "KIKI", 1: "KOOKOO"}
