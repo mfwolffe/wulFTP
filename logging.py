@@ -51,7 +51,7 @@ def dispatch(level: int, msg: str, err=None):
       preconfigured logger
     """
     logga = logging.getLogger("sftp_logger")
-    out = f"{msg}: {err}" if err else msg
+    out = f"{msg}: {err}" if err is not None else msg
 
     loggers = {
         logging.INFO:     logga.info,
