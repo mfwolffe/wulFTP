@@ -19,3 +19,6 @@ the gui will freeze - excuse to practice
   - qthread?
 - ensure decorator usage stays (?) idiomatic
 - speaking of decorator, the check for `"upload" in fn.__name__` within it is pretty brittle
+- load_key need not belong to client class maybe idk? 
+- document better. client is looking sparse aside from todos. very least be better w/ notes in "devlog" (lol)
+
