@@ -11,17 +11,18 @@ the gui will freeze - excuse to practice
 
 
 #### todos (and todonts)
-- [ ] log to files (in addition to ?) console
-- [ ] security things but dont say them out loud (just kidding)
-- [ ] handling for bad keys/pass, etc
-- [ ] dispatch levels need to reflect new approach with `logging`
-- [ ] threads :( |? :) 
+- log to files (in addition to ?) console
+- security things but dont say them out loud (just kidding)
+- handling for bad keys/pass, etc
+- dispatch levels need to reflect new approach with `logging`
+- threads :( |? :) 
   - qthread?
-- [ ] ensure decorator usage stays (?) idiomatic
-- [ ] speaking of decorator, the check for `"upload" in fn.__name__` within it is pretty brittle
-- [ ] load_key need not belong to client class maybe idk? 
-- [ ] document better. client is looking sparse aside from todos. very least be better w/ notes in "devlog" (lol)
-- [ ] better/more sensible logging
-- [ ] get logging out of decorators
+- ensure decorator usage stays (?) idiomatic
+- speaking of decorator, the check for `"upload" in fn.__name__` within it is pretty brittle
+- load_key need not belong to client class maybe idk? 
+- document better. client is looking sparse aside from todos. very least be better w/ notes in "devlog" (lol)
+- better/more sensible logging
+- get logging out of decorators
+- [X] don't use the markdown checkboxes. no way I'm coming back to x that in
 
 
