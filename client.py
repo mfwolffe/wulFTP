@@ -5,12 +5,6 @@ from decorators import handle_excepts, dispatch
 import os
 # import logging
 
-# TODO @mfwolffe
-#       - threading for uploads
-#       - logging to logfile instead of console
-#       - more robust connect from a sec standpoint
-#       - handling for bad keys/pass, etc
-
 
 class Client:
     def __init__(self):
@@ -18,9 +12,7 @@ class Client:
         self.client     = None
         self.connected  = False
 
-    def load_key(filepath, key_type=DFAULTKEY, passphrase=None):
-        # TODO @mfwolffe think about the decorator and the current
-        #                current exception handling
+    def load_key(self, filepath, key_type=DFAULTKEY, passphrase=None):
         """
             Use paramiko util to load arbitrary type private key
         """
@@ -28,7 +20,7 @@ class Client:
             raise ValueError(f"Key file not found: {filepath}")
 
         if key_type not in VALIDKEYS:
-            raise ValueError("Unsupported key type: {key_type}")
+            raise ValueError(f"Unsupported key type: {key_type}")
 
         try:
             key = VALIDKEYS[key_type].from_private_key_file(filepath, password=passphrase)
@@ -50,33 +42,34 @@ class Client:
             Using paramiko utils, establish
             an sftp connection
         """
-        # TODO @mfwolffe make grace or some such thing
 
-        try:
-            self.client = paramiko.SSHClient()
+        self.client = paramiko.SSHClient()
+        # TODO @mfwolffe off races the to
+        #                probably just lock it
+        #                consider making atomic in interim?
+        self.sftp = None
 
-            # TODO @mfwolffe do not automatically add to known hosts file
-            #                man in the middle...
-            self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        if KEYPATH:
+            try:
+                pkey = self.load_key(KEYPATH, key_type="Ed25519")
+            except ValueError as e:
+                dispatch(2, "Key error. Retrying with RSA...", e)
+                try:
+                    pkey = self.load_key(KEYPATH, key_type="RSA")
+                except ValueError as e:
+                    dispatch(0, "Unable to proceed with connection", e)
+                    return False
+            self.client.connect(HOST, PORT, UNAME, pkey=pkey)
+        else:
+            self.client.connect(HOST, PORT, UNAME, UPWD)
 
-            # TODO @mfwolffe either enforce an algo or allow choice
-            #                between strong types
-            if KEYPATH:
-                pkey = paramiko.RSAKey(filename=KEYPATH)
-                self.client.connect(HOST, PORT, UNAME, pkey=pkey)
-            else:
-                self.client.connect(HOST, PORT, UNAME, UPWD)
-
-            self.sftp = self.client.open_sftp()
-            print(f"Connected to {HOST}")
-            return True
-        except Exception as e:
-            print(f"ERROR: Failed to connect to {HOST}.\nMESSAGE: {e}")
-            return False
+        print(f"Successfully connected to {HOST}")
+        return True
 
     @handle_excepts
     def upload_thing(self, lPath):
         # DONE? @mfwolffe write me lol
+        #                 done does not exist
 
         if not self.sftp:
             dispatch(0, "No active SFTP session. Unable to upload file.")
@@ -90,18 +83,19 @@ class Client:
         remote_path = os.path.join(LANDING, fName)  # noqa: F841
 
         if not os.path.exists(lPath):
-            dispatch(0, "Filepath '{fname}' not found.")
+            dispatch(0, f"Filepath '{fName}' not found.")
             return False
 
         try:
-            # write uploader
+            # TODO @mfwolffe write (think
+            #                about) upload routine
             pass
         except PermissionError as e:
             dispatch(2, "Permission denied", e)
             return False
 
         # default to failure
-        dispatch(2, "Upload of '{fName}' not completed.")
+        dispatch(0, f"Upload of '{fName}' not completed.")
         return False
 
     @handle_excepts
@@ -112,13 +106,10 @@ class Client:
             I've got most of the possible races?
             (caught by decorator)
         """
-        # DONE @mfwolffe write me lol
-        # if not self.connected:
-        #     print("No active connection")
-        #     return
 
         if not self.client:
             dispatch(4, "No active connection.")
+            return False
 
         if self.sftp:
             self.sftp.close()
@@ -129,3 +120,5 @@ class Client:
             dispatch(4, "SSH connection closed.")
 
         dispatch(4, "Connection to host severed cleanly.")
+
+        return True
