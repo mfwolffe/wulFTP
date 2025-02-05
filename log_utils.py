@@ -76,7 +76,3 @@ def dispatch(level: int, msg: str, err=None):
     # old: loggers.get(level, logga.info)(out)
     loggers[level](out)
 
-
-# SEVERETIES = {0: "Fatal", 1: "Error", 2: "Warning", 3: "Internal", 4: "Info"}
-# def dispatch(level: int, msg: str, err=None):
-    # print(f"[{SEVERETIES[level]}] {msg}: {'' if err is None else err}")
