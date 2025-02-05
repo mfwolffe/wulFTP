@@ -1,9 +1,8 @@
 
 import paramiko
-from fakefig import HOST, PORT, UNAME, UPWD, KEYPATH, LANDING, DFAULTKEY, VALIDKEYS
 from decorators import handle_excepts, dispatch
+from fakefig    import HOST, PORT, UNAME, UPWD, KEYPATH, LANDING, DFAULTKEY, VALIDKEYS
 import os
-# import logging
 
 
 class Client:
